@@ -1,7 +1,6 @@
 # phishflood
 
 <p align="center">
-  <img alt="goransom" src="https://github.com/andpalmier/raw=true" />
   <p align="center">
     <a href="https://github.com/andpalmier/phishflood/blob/main/LICENSE"><img alt="Software License" src="https://img.shields.io/badge/license-GPL3-brightgreen.svg?style=flat-square"></a>
     <a href="https://goreportcard.com/report/github.com/andpalmier/phishflood"><img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/andpalmier/phishflood?style=flat-square"></a>
@@ -10,7 +9,7 @@
 </p>
 
 
-This is a proof of concept to pollute with fake data the credentials stolen with a phishing kit. An old version of this project was discussed [in this blog post](https://andpalmier.github.io/flooding-phishing-kits/), I decided to use this repository to add some features.
+This is a proof of concept to pollute with fake data the credentials stolen with a phishing kit. An old version of this project was discussed [in this blog post](https://andpalmier.github.io/posts/flooding-phishing-kits/), I decided to use this repository to add some features.
 
 ## Usage
 
@@ -34,4 +33,3 @@ This will create a folder `build` and an executable `phishflood`. You can then r
 - [x] Remove colly dependency
 - [ ] Add compatibility with known phishing kits
 - [ ] Use [faker](https://github.com/bxcodec/faker) for data generation
-
