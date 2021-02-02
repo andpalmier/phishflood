@@ -23,6 +23,8 @@ $ make phishflood
 
 This will create a folder `build` and an executable `phishflood`. You can then run the executable with the following flags:
 
+- `-dmax int`: maximum delay between consecutive requests, in seconds (default 3600).
+- `-dmin int`: minimun delay between consecutive requests, in seconds (default 10).
 - `-goroutines int`: number of goRoutines (default 10).
 - `-proxies string`: one or multiple proxies; specify the schema (http default) and port, and use ',' as a separator.
 - `-ua string`: User Agent to be used, using Chrome on iPhone by default.
