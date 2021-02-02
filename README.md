@@ -11,6 +11,8 @@
 
 This is a proof of concept to pollute with fake data the credentials stolen with a phishing kit. An old version of this project was discussed [in this blog post](https://andpalmier.github.io/posts/flooding-phishing-kits/), I decided to use this repository to add some features.
 
+** PLEASE NOTE: At the moment, ** `phishflood` ** is compatible only with the phishing kits mentioned in the blog post, and with some others which follows the same structure. This is due to a naif approach for the data generation (it's a PoC 😅). Compatibility with different kits is in scope, but do not expect updates soon. **
+
 ## Usage
 
 After downloading the repository, build the project:

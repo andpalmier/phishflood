@@ -14,6 +14,8 @@ var (
 	numGoroutines = 10
 	px            = ""
 	userAgent     = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1"
+	mindelay      = 10
+	maxdelay      = 3600
 )
 
 func init() {
@@ -21,6 +23,8 @@ func init() {
 	flag.StringVar(&px, "proxies", px, "one or multiple proxies; specify the schema (http default) and port, and use ',' as a separator.")
 	flag.IntVar(&numGoroutines, "goroutines", numGoroutines, "number of goRoutines.")
 	flag.StringVar(&userAgent, "ua", userAgent, "User Agent to be used, using Chrome on iPhone by default.")
+	flag.IntVar(&mindelay, "dmin", mindelay, "minimun delay between consecutive requests, in seconds.")
+	flag.IntVar(&maxdelay, "dmax", maxdelay, "maximum delay between consecutive requests, in seconds.")
 }
 
 // close execution with error
@@ -38,6 +42,11 @@ func main() {
 		fmt.Printf("no -url specified.\n\n")
 		flag.PrintDefaults()
 		os.Exit(1)
+	}
+
+	// check delay provided
+	if mindelay > maxdelay {
+		die("minimum delay cannot be greater than maximum delay.\n")
 	}
 
 	// add schema
@@ -65,6 +74,10 @@ func main() {
 
 	// go to the url and print findings
 	postAction, inputNames, inputTypes := getPostData(phishingUrl, parsedProxies, userAgent)
+	if postAction == "" || len(inputNames) == 0 || len(inputTypes) == 0 {
+		die("couldn't find a compatible form in the given page.\n")
+	}
+
 	fmt.Printf("[!] Found a form with action: %s \n[!] Input fields names found: %v\n[!] Input fields types found: %v\n\n", postAction, inputNames, inputTypes)
 
 	// set random seed
@@ -76,8 +89,8 @@ func main() {
 	// start routines
 	for i := 0; i < numGoroutines; i++ {
 
-		// create wait for a random number of seconds between 2 and 10
-		w := int(rand.Intn(10-2) + 2)
+		// wait for a random number of seconds between mindelay and maxdelay
+		w := int(rand.Intn(maxdelay - mindelay) + mindelay)
 		time.Sleep(time.Duration(w) * time.Second)
 
 		// send requests with fake data
