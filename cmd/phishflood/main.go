@@ -90,7 +90,7 @@ func main() {
 	for i := 0; i < numGoroutines; i++ {
 
 		// wait for a random number of seconds between mindelay and maxdelay
-		w := int(rand.Intn(maxdelay - mindelay) + mindelay)
+		w := int(rand.Intn(maxdelay-mindelay) + mindelay)
 		time.Sleep(time.Duration(w) * time.Second)
 
 		// send requests with fake data

@@ -11,7 +11,7 @@
 
 This is a proof of concept to pollute with fake data the credentials stolen with a phishing kit. An old version of this project was discussed [in this blog post](https://andpalmier.github.io/posts/flooding-phishing-kits/), I decided to use this repository to add some features.
 
-** PLEASE NOTE: At the moment, ** `phishflood` ** is compatible only with the phishing kits mentioned in the blog post, and with some others which follows the same structure. This is due to a naif approach for the data generation (it's a PoC 😅). Compatibility with different kits is in scope, but do not expect updates soon. **
+**PLEASE NOTE: At the moment,** `phishflood` **is compatible only with the phishing kits mentioned in the blog post, and with some others which follows the same structure. This is due to a naif approach for the data generation (it's a PoC 😅). Compatibility with different kits is in scope, but do not expect updates soon.**
 
 ## Usage
 
@@ -23,12 +23,12 @@ $ make phishflood
 
 This will create a folder `build` and an executable `phishflood`. You can then run the executable with the following flags:
 
-- `-dmax int`: maximum delay between consecutive requests, in seconds (default 3600).
-- `-dmin int`: minimun delay between consecutive requests, in seconds (default 10).
-- `-goroutines int`: number of goRoutines (default 10).
-- `-proxies string`: one or multiple proxies; specify the schema (http default) and port, and use ',' as a separator.
-- `-ua string`: User Agent to be used, using Chrome on iPhone by default.
-- `-url string`: domain name or url, if schema is not specified, https is assumed.
+- `-dmax (int)`: maximum delay between consecutive requests, in seconds (default 3600).
+- `-dmin (int)`: minimun delay between consecutive requests, in seconds (default 10).
+- `-goroutines (int)`: number of goRoutines (default 10).
+- `-proxies (string)`: one or multiple proxies; specify the schema (http default) and port, and use ',' as a separator.
+- `-ua (string)`: User Agent to be used, using Chrome on iPhone by default.
+- `-url (string)`: domain name or url, if schema is not specified, https is assumed.
 
 ### Todo
 
@@ -36,4 +36,4 @@ This will create a folder `build` and an executable `phishflood`. You can then r
 - [x] Add custom User Agent flag
 - [x] Remove colly dependency
 - [ ] Add compatibility with known phishing kits
-- [ ] Use [faker](https://github.com/bxcodec/faker) for data generation
+- [ ] Use [faker](https://github.com/bxcodec/faker) for fake data generation
