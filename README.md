@@ -1,6 +1,7 @@
 # phishflood
 
 <p align="center">
+  <img alt="phishflood" src="https://github.com/andpalmier/phishflood/blob/main/img/phishflood.png?raw=true" />
   <p align="center">
     <a href="https://github.com/andpalmier/phishflood/blob/main/LICENSE"><img alt="Software License" src="https://img.shields.io/badge/license-GPL3-brightgreen.svg?style=flat-square"></a>
     <a href="https://goreportcard.com/report/github.com/andpalmier/phishflood"><img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/andpalmier/phishflood?style=flat-square"></a>
@@ -27,13 +28,14 @@ This will create a folder `build` and an executable `phishflood`. You can then r
 - `-dmin (int)`: minimun delay between consecutive requests, in seconds (default 10).
 - `-goroutines (int)`: number of goRoutines (default 10).
 - `-proxies (string)`: one or multiple proxies; specify the schema (http default) and port, and use ',' as a separator.
-- `-ua (string)`: User Agent to be used, using Chrome on iPhone by default.
+- `-seed (int64)`: seed used for random data generation, random if not specified.
 - `-url (string)`: domain name or url, if schema is not specified, https is assumed.
+- `-ua (string)`: User Agent to be used, using Chrome on iPhone by default.
 
 ### Todo
 
 - [x] Improve code organization
 - [x] Add custom User Agent flag
 - [x] Remove colly dependency
+- [x] Started [gofakeit](https://github.com/brianvoe/gofakeit) integration for fake data generation
 - [ ] Add compatibility with known phishing kits
-- [ ] Use [faker](https://github.com/bxcodec/faker) for fake data generation

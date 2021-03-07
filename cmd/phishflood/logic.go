@@ -1,20 +1,24 @@
 package main
 
+// TODO
+// add in case they want exactly that amount of waiting...
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"math/rand"
 	"net/http"
 	"net/url"
 	"path"
+	"strings"
 	"time"
+	"strconv"
+	"github.com/PuerkitoBio/goquery"
+	"github.com/brianvoe/gofakeit/v6"
 )
 
-// make POST requests to the given url using the proxy
-// generate data based on type or name -> to be improved
-func flood(i int, postAction string, inputNames []string, inputTypes []string, parsedProxies []string, ch chan<- string, userAgent string) {
+func makeClient(i int, parsedProxies []string) (*http.Client, error) {
 
 	var myClient *http.Client
 
@@ -22,27 +26,47 @@ func flood(i int, postAction string, inputNames []string, inputTypes []string, p
 	if len(parsedProxies) != 0 {
 		proxyURL, err := url.Parse(parsedProxies[i%len(parsedProxies)])
 		if err != nil {
-			die("error parsing the proxy address: %v\n", err)
+			err := errors.New("error parsing the proxy address")
+			return nil, err
 		}
-		myClient = &http.Client{Timeout: 15 * time.Second, Transport: &http.Transport{Proxy: http.ProxyURL(proxyURL)}}
+		myClient = &http.Client{Timeout: 15 * time.Second, Transport: &http.Transport{
+			Proxy: http.ProxyURL(proxyURL)}}
 	} else {
 		myClient = &http.Client{Timeout: 15 * time.Second}
+	}
+	return myClient, nil
+}
+
+// make POST requests to the given url using the proxy
+// generate data based on type or name -> to be improved
+func flood(i int, postAction string, inputNames []string, inputTypes []string, parsedProxies []string,
+	ch chan<- string, userAgent string, seed int64) {
+
+	myClient, err := makeClient(i, parsedProxies)
+	if err != nil {
+		die("%v\n", err)
 	}
 
 	// generate fake data
 	vals := url.Values{}
+
+	// handle in future
+	gofakeit.Seed(seed)
+	var val string
 	for _, valName := range inputNames {
-
-		// "cellulare" stands for mobile phone, so we have a particular interval to make it realistic
-		if valName == "cellulare" {
-			val := rand.Intn(3499999999-3200000000) + 3200000000
-			vals.Set(valName, fmt.Sprintf("%d", val))
-
-			// these are generic numbers
-		} else {
-			val := rand.Intn(99999999-10000000) + 10000000
-			vals.Set(valName, fmt.Sprintf("%d", val))
+		switch valName {
+		// cellulare is mobile phone in italian
+		case "cellulare":
+			val = gofakeit.Phone()
+		case "login":
+			val = gofakeit.Email()
+		case "password":
+			val = gofakeit.Password(true, false, true, false, false, rand.Intn(16-8)+8)
+		// by default use random number (to keep compatibility with phishing kit)
+		default:
+			val = strconv.Itoa(gofakeit.Number(1111111,9999999))
 		}
+		vals.Set(valName, fmt.Sprintf("%s", val))
 	}
 
 	// use bytes to encode the fake data for the post
@@ -70,32 +94,26 @@ func flood(i int, postAction string, inputNames []string, inputTypes []string, p
 		if err != nil {
 			die("error on marshal for fake data: %v \n", err)
 		}
-		ch <- fmt.Sprintf("Request #%d with these parameters: %s returned the following status code: %d %s.\n", i+1, prettyVals, resp.StatusCode, http.StatusText(resp.StatusCode))
+		ch <- fmt.Sprintf("Request #%d with these parameters: %s returned the following status " +
+			"code: %d %s.\n", i+1, prettyVals, resp.StatusCode, http.StatusText(resp.StatusCode))
 	}
 }
 
 // given phishingUrl, visit it using the first of the proxy list and the UserAgent
 // get the action of the POST and the type and names of the attributes
-func getPostData(phishingUrl string, parsedProxies []string, userAgent string) (string, []string, []string) {
+func getPostData(phishingURL string, parsedProxies []string, userAgent string) (string, []string, []string) {
 
 	postAction := ""
 	var inputNames []string
 	var inputTypes []string
-	var myClient *http.Client
 
-	// make post request using proxy if specified
-	if len(parsedProxies) != 0 {
-		proxyURL, err := url.Parse(parsedProxies[0])
-		if err != nil {
-			die("error parsing the proxy address: %v\n", err)
-		}
-		myClient = &http.Client{Timeout: 15 * time.Second, Transport: &http.Transport{Proxy: http.ProxyURL(proxyURL)}}
-	} else {
-		myClient = &http.Client{Timeout: 15 * time.Second}
+	myClient, err := makeClient(0, parsedProxies)
+	if err != nil {
+		die("%v\n", err)
 	}
 
 	// prepare request
-	req, err := http.NewRequest("GET", phishingUrl, nil)
+	req, err := http.NewRequest("GET", phishingURL, nil)
 	if err != nil {
 		die("could not make the GET request: %v \n", err)
 	}
@@ -129,12 +147,16 @@ func getPostData(phishingUrl string, parsedProxies []string, userAgent string) (
 			form.Find("input").Each(func(i int, input *goquery.Selection) {
 				nameattr, nameOk := input.Attr("name")
 				typeattr, typeOk := input.Attr("type")
+				if strings.ToLower(typeattr) == "submit" {
+					typeOk = false
+				}
+				_, hiddenOk := input.Attr("hidden")
 
 				// find input with name and attributes
-				if actionOk && nameOk && typeOk {
+				if nameOk && typeOk && typeattr != "hidden" && !hiddenOk {
 					inputNames = append(inputNames, nameattr)
 					inputTypes = append(inputTypes, typeattr)
-					u, err := url.Parse(phishingUrl)
+					u, err := url.Parse(phishingURL)
 					if err != nil {
 						die("error parsing diven url: %v \n", err)
 					}
