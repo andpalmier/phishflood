@@ -1,7 +1,5 @@
 package main
 
-// TODO
-// add in case they want exactly that amount of waiting...
 import (
 	"bytes"
 	"encoding/json"
