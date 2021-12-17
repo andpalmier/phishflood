@@ -10,17 +10,16 @@ import (
 )
 
 var (
-	phishingURL   	= "" // given URL
-	numGoroutines 	= 10 // goroutines
-	px            	= "" // proxies
+	phishingURL   = "" // given URL
+	numGoroutines = 10 // goroutines
+	px            = "" // proxies
 	// iphone UA by default
-	userAgent     	= "Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like " +
+	userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like " +
 		"Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1"
-	mindelay      	= 10
-	maxdelay		= 3600
-	seed int64 		= 0 // seed for random data generation
-	asciiart string =
-`
+	mindelay        = 10
+	maxdelay        = 3600
+	seed     int64  = 0 // seed for random data generation
+	asciiart string = `
       _    _       _    ___  _              _ 
  ___ | |_ |_| ___ | |_ |  _|| | ___  ___  _| |
 | . ||   || ||_ -||   ||  _|| || . || . || . |
@@ -32,7 +31,7 @@ by @andpalmier
 
 func init() {
 	flag.StringVar(&phishingURL, "url", phishingURL, "domain name or url, https is assumed.")
-	flag.StringVar(&px, "proxies", px, "one or multiple proxies; specify the schema (http default) and port, and " +
+	flag.StringVar(&px, "proxies", px, "one or multiple proxies; specify the schema (http default) and port, and "+
 		"use ',' as a separator.")
 	flag.IntVar(&numGoroutines, "goroutines", numGoroutines, "number of goRoutines.")
 	flag.StringVar(&userAgent, "ua", userAgent, "User Agent to be used, using Chrome on iPhone by default.")
@@ -76,7 +75,7 @@ func main() {
 	// check if proxies were provided
 	if px == "" {
 		fmt.Println("WARNING: no -proxies specified, this could expose your IP to the phishing kit. You have 5 " +
-			 "seconds to stop the execution, or it will continue as it is.")
+			"seconds to stop the execution, or it will continue as it is.")
 		time.Sleep(time.Duration(5) * time.Second)
 	} else {
 		// split proxies in a list and add schema if not provided
@@ -94,7 +93,7 @@ func main() {
 		die("couldn't find a compatible form in the given page.\n")
 	}
 
-	fmt.Printf("\n[!] Found a form with action: %s \n[!] Input fields names found: %v\n[!] Input fields types " +
+	fmt.Printf("\n[!] Found a form with action: %s \n[!] Input fields names found: %v\n[!] Input fields types "+
 		"found: %v\n\n", postAction, inputNames, inputTypes)
 
 	// set random seed if not provided by user

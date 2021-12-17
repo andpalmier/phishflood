@@ -5,15 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/PuerkitoBio/goquery"
+	"github.com/brianvoe/gofakeit/v6"
 	"math/rand"
 	"net/http"
 	"net/url"
 	"path"
+	"strconv"
 	"strings"
 	"time"
-	"strconv"
-	"github.com/PuerkitoBio/goquery"
-	"github.com/brianvoe/gofakeit/v6"
 )
 
 func makeClient(i int, parsedProxies []string) (*http.Client, error) {
@@ -62,7 +62,7 @@ func flood(i int, postAction string, inputNames []string, inputTypes []string, p
 			val = gofakeit.Password(true, false, true, false, false, rand.Intn(16-8)+8)
 		// by default use random number (to keep compatibility with phishing kit)
 		default:
-			val = strconv.Itoa(gofakeit.Number(1111111,9999999))
+			val = strconv.Itoa(gofakeit.Number(1111111, 9999999))
 		}
 		vals.Set(valName, fmt.Sprintf("%s", val))
 	}
@@ -92,7 +92,7 @@ func flood(i int, postAction string, inputNames []string, inputTypes []string, p
 		if err != nil {
 			die("error on marshal for fake data: %v \n", err)
 		}
-		ch <- fmt.Sprintf("Request #%d with these parameters: %s returned the following status " +
+		ch <- fmt.Sprintf("Request #%d with these parameters: %s returned the following status "+
 			"code: %d %s.\n", i+1, prettyVals, resp.StatusCode, http.StatusText(resp.StatusCode))
 	}
 }
